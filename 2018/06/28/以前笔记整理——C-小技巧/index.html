@@ -79,16 +79,17 @@
 
 
 
-<meta name="description" content="The world is so beautiful, it is worth people to strive for it">
-<meta property="og:type" content="website">
-<meta property="og:title" content="chamlion&#39;blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="1、new操作符的重载 new的过程分成两部分，第一部分分配内存，第二部分调用构造函数。重载new并不会影响调用构造函数，new的重载只是重载了分配内存那部分操作 2、为什么free操作不需要指定大小 因为在用malloc申请内存的时候，实际申请的是两个不同性质的空间，一块内存存储地址和实际申请内存大小的映射关系。一块空间为申请的内存。Free操作，会先查找要free的地址与他申请内存大小的映射关">
+<meta property="og:type" content="article">
+<meta property="og:title" content="以前笔记整理——C++小技巧">
+<meta property="og:url" content="http://yoursite.com/2018/06/28/以前笔记整理——C-小技巧/index.html">
 <meta property="og:site_name" content="chamlion&#39;blog">
-<meta property="og:description" content="The world is so beautiful, it is worth people to strive for it">
+<meta property="og:description" content="1、new操作符的重载 new的过程分成两部分，第一部分分配内存，第二部分调用构造函数。重载new并不会影响调用构造函数，new的重载只是重载了分配内存那部分操作 2、为什么free操作不需要指定大小 因为在用malloc申请内存的时候，实际申请的是两个不同性质的空间，一块内存存储地址和实际申请内存大小的映射关系。一块空间为申请的内存。Free操作，会先查找要free的地址与他申请内存大小的映射关">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-06-27T16:21:44.674Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="chamlion&#39;blog">
-<meta name="twitter:description" content="The world is so beautiful, it is worth people to strive for it">
+<meta name="twitter:title" content="以前笔记整理——C++小技巧">
+<meta name="twitter:description" content="1、new操作符的重载 new的过程分成两部分，第一部分分配内存，第二部分调用构造函数。重载new并不会影响调用构造函数，new的重载只是重载了分配内存那部分操作 2、为什么free操作不需要指定大小 因为在用malloc申请内存的时候，实际申请的是两个不同性质的空间，一块内存存储地址和实际申请内存大小的映射关系。一块空间为申请的内存。Free操作，会先查找要free的地址与他申请内存大小的映射关">
 
 
 
@@ -118,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/06/28/以前笔记整理——C-小技巧/"/>
 
 
 
 
 
-  <title>chamlion'blog</title>
+  <title>以前笔记整理——C++小技巧 | chamlion'blog</title>
   
 
 
@@ -143,8 +144,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -227,9 +227,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -259,9 +259,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/06/28/以前笔记整理——C-小技巧/" itemprop="url">以前笔记整理——C++小技巧</a></h1>
+          <h1 class="post-title" itemprop="name headline">以前笔记整理——C++小技巧</h1>
         
 
         <div class="post-meta">
@@ -311,9 +309,7 @@
       
 
       
-        
-          
-            <h1 id="1、new操作符的重载"><a href="#1、new操作符的重载" class="headerlink" title="1、new操作符的重载"></a>1、new操作符的重载</h1><p> new的过程分成两部分，第一部分分配内存，第二部分调用构造函数。<br>重载new并不会影响调用构造函数，new的重载只是重载了分配内存那部分操作</p>
+        <h1 id="1、new操作符的重载"><a href="#1、new操作符的重载" class="headerlink" title="1、new操作符的重载"></a>1、new操作符的重载</h1><p> new的过程分成两部分，第一部分分配内存，第二部分调用构造函数。<br>重载new并不会影响调用构造函数，new的重载只是重载了分配内存那部分操作</p>
 <h1 id="2、为什么free操作不需要指定大小"><a href="#2、为什么free操作不需要指定大小" class="headerlink" title="2、为什么free操作不需要指定大小"></a>2、为什么free操作不需要指定大小</h1><p> 因为在用malloc申请内存的时候，实际申请的是两个不同性质的空间，一块内存存储地址和实际申请内存大小的映射关系。一块空间为申请的内存。<br>Free操作，会先查找要free的地址与他申请内存大小的映射关系表，然后释放对应地址对应大小内存。<br>所以如下代码是一定有问题的<br>Char <em>b =(char </em>) malloc(100)<br>Free(b-10)</p>
 <h1 id="3、-pragma-pack-1-的使用场景"><a href="#3、-pragma-pack-1-的使用场景" class="headerlink" title="3、#pragma pack(1)的使用场景"></a>3、#pragma pack(1)的使用场景</h1><p>  就是设置字节对齐策略，为了让类中成员所占内存大小，不受系统默认的对齐字节数影响。</p>
 <h1 id="4、关于notifyone和notifyall的区别和使用场景"><a href="#4、关于notifyone和notifyall的区别和使用场景" class="headerlink" title="4、关于notifyone和notifyall的区别和使用场景"></a>4、关于notifyone和notifyall的区别和使用场景</h1><p> notifyone是对notifyall的一种优化，两个在实际使用中应该能相互替换<br>notifyone随机唤醒一个线程，notifyall唤醒所有线程去争用锁。<br>如果线程中存在优先级之分，应该用notifyall，否则用notifyone</p>
@@ -328,8 +324,6 @@
 <h1 id="11、关于继承与多态"><a href="#11、关于继承与多态" class="headerlink" title="11、关于继承与多态"></a>11、关于继承与多态</h1><p> 继承的使用场景，当我们设计类中，确实需要用到多态这一特性的时候，考虑使用继承，否则使用组合。继承是is a的关系，组合是has a的关系</p>
 <h1 id="12、多态的实现原理"><a href="#12、多态的实现原理" class="headerlink" title="12、多态的实现原理"></a>12、多态的实现原理</h1><p>一个类如果包含虚函数，那么会有一个虚函数表。虚函数指针指向这张虚函数表，如果声明一个子类对象时，虚函数表里面对应的是子类的虚函数。调用父类指针指向子类对象时，然后执行的是子类虚函数表中的函数，从而实现多态。多继承就是多个虚函数指针，指向多个虚函数表。<br>存在的问题，私有虚函数，可以通过指针调用</p>
 
-          
-        
       
     </div>
     
@@ -346,131 +340,28 @@
       
 
       
-
-      
-
       
       
-        <div class="post-eof"></div>
+
       
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/26/2018-6-26-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="chamlion">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="chamlion'blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/06/26/2018-6-26-1/" itemprop="url">2018-6-26</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-26T00:49:34+08:00">
-                2018-06-26
-              </time>
+              <a href="/2018/06/26/2018-6-26-1/" rel="next" title="2018-6-26">
+                <i class="fa fa-chevron-left"></i> 2018-6-26
+              </a>
             
+          </div>
 
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
             
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <h1 id="Hello-world"><a href="#Hello-world" class="headerlink" title="Hello world"></a>Hello world</h1>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -480,10 +371,11 @@
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -491,6 +383,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -511,8 +407,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -558,6 +463,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1、new操作符的重载"><span class="nav-number">1.</span> <span class="nav-text">1、new操作符的重载</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2、为什么free操作不需要指定大小"><span class="nav-number">2.</span> <span class="nav-text">2、为什么free操作不需要指定大小</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3、-pragma-pack-1-的使用场景"><span class="nav-number">3.</span> <span class="nav-text">3、#pragma pack(1)的使用场景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4、关于notifyone和notifyall的区别和使用场景"><span class="nav-number">4.</span> <span class="nav-text">4、关于notifyone和notifyall的区别和使用场景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5、Ace栅栏的作用"><span class="nav-number">5.</span> <span class="nav-text">5、Ace栅栏的作用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#6、设置线程优先级"><span class="nav-number">6.</span> <span class="nav-text">6、设置线程优先级</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7、如何让线程按照顺序启动"><span class="nav-number">7.</span> <span class="nav-text">7、如何让线程按照顺序启动</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#8、如何减少锁争用"><span class="nav-number">8.</span> <span class="nav-text">8、如何减少锁争用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#9、左值、右值"><span class="nav-number">9.</span> <span class="nav-text">9、左值、右值</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#10、结构体定义小技巧"><span class="nav-number">10.</span> <span class="nav-text">10、结构体定义小技巧</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#11、关于继承与多态"><span class="nav-number">11.</span> <span class="nav-text">11、关于继承与多态</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#12、多态的实现原理"><span class="nav-number">12.</span> <span class="nav-text">12、多态的实现原理</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -698,6 +619,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
