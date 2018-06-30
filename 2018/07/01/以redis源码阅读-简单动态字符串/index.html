@@ -79,16 +79,17 @@
 
 
 
-<meta name="description" content="The world is so beautiful, it is worth people to strive for it">
-<meta property="og:type" content="website">
-<meta property="og:title" content="chamlion&#39;blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="设计时考虑的点1、常数时间内获取到字符串长度2、杜绝缓冲区溢出3、减少修改字符串带来的内存重分配次数4、二进制安全是指无论字符串中包含何种字符，都不会对它的操作造成任何正确性的影响。比如包含空字符(\0)的时候，应该能正常返回到字符串结尾的长度，而不是到空格的长度。而strlen()对字符串求长度时会有这个问题。5、兼容部分c字符串函数 实现首先看结构体定义12345678struct sdshd">
+<meta property="og:type" content="article">
+<meta property="og:title" content="以redis源码阅读--简单动态字符串">
+<meta property="og:url" content="http://yoursite.com/2018/07/01/以redis源码阅读-简单动态字符串/index.html">
 <meta property="og:site_name" content="chamlion&#39;blog">
-<meta property="og:description" content="The world is so beautiful, it is worth people to strive for it">
+<meta property="og:description" content="设计时考虑的点1、常数时间内获取到字符串长度2、杜绝缓冲区溢出3、减少修改字符串带来的内存重分配次数4、二进制安全是指无论字符串中包含何种字符，都不会对它的操作造成任何正确性的影响。比如包含空字符(\0)的时候，应该能正常返回到字符串结尾的长度，而不是到空格的长度。而strlen()对字符串求长度时会有这个问题。5、兼容部分c字符串函数 实现首先看结构体定义12345678struct sdshd">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-06-30T16:14:46.945Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="chamlion&#39;blog">
-<meta name="twitter:description" content="The world is so beautiful, it is worth people to strive for it">
+<meta name="twitter:title" content="以redis源码阅读--简单动态字符串">
+<meta name="twitter:description" content="设计时考虑的点1、常数时间内获取到字符串长度2、杜绝缓冲区溢出3、减少修改字符串带来的内存重分配次数4、二进制安全是指无论字符串中包含何种字符，都不会对它的操作造成任何正确性的影响。比如包含空字符(\0)的时候，应该能正常返回到字符串结尾的长度，而不是到空格的长度。而strlen()对字符串求长度时会有这个问题。5、兼容部分c字符串函数 实现首先看结构体定义12345678struct sdshd">
 
 
 
@@ -118,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/07/01/以redis源码阅读-简单动态字符串/"/>
 
 
 
 
 
-  <title>chamlion'blog</title>
+  <title>以redis源码阅读--简单动态字符串 | chamlion'blog</title>
   
 
 
@@ -143,8 +144,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -227,9 +227,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -259,9 +259,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/07/01/以redis源码阅读-简单动态字符串/" itemprop="url">以redis源码阅读--简单动态字符串</a></h1>
+          <h1 class="post-title" itemprop="name headline">以redis源码阅读--简单动态字符串</h1>
         
 
         <div class="post-meta">
@@ -311,9 +309,7 @@
       
 
       
-        
-          
-            <h1 id="设计时考虑的点"><a href="#设计时考虑的点" class="headerlink" title="设计时考虑的点"></a>设计时考虑的点</h1><p>1、常数时间内获取到字符串长度<br>2、杜绝缓冲区溢出<br>3、减少修改字符串带来的内存重分配次数<br>4、二进制安全<br>是指无论字符串中包含何种字符，都不会对它的操作造成任何正确性的影响。<br>比如包含空字符(\0)的时候，应该能正常返回到字符串结尾的长度，而不是到空格的长度。而strlen()对字符串求长度时会有这个问题。<br>5、兼容部分c字符串函数</p>
+        <h1 id="设计时考虑的点"><a href="#设计时考虑的点" class="headerlink" title="设计时考虑的点"></a>设计时考虑的点</h1><p>1、常数时间内获取到字符串长度<br>2、杜绝缓冲区溢出<br>3、减少修改字符串带来的内存重分配次数<br>4、二进制安全<br>是指无论字符串中包含何种字符，都不会对它的操作造成任何正确性的影响。<br>比如包含空字符(\0)的时候，应该能正常返回到字符串结尾的长度，而不是到空格的长度。而strlen()对字符串求长度时会有这个问题。<br>5、兼容部分c字符串函数</p>
 <h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>首先看结构体定义<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">struct sdshdr &#123;</span><br><span class="line">    // buf 中已占用空间的长度</span><br><span class="line">    int len;</span><br><span class="line">    // buf 中剩余可用空间的长度</span><br><span class="line">    int free;</span><br><span class="line">    // 数据空间</span><br><span class="line">    char buf[];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
 <p>这里面buff不用 char<em> buff的原因是 char buf[]不占空间，char</em> buff占用一个指针空间。<br>在获取字符串长度时，用到了这一特性<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">static inline size_t sdslen(const sds s) &#123;</span><br><span class="line">    struct sdshdr *sh = (void*)(s-(sizeof(struct sdshdr)));</span><br><span class="line">    return sh-&gt;len;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>传入的参数其实是buff地址。所以在结构体指针映射的时候，需要在buff的基础上，向左移动两位。<br>在获取可用空间长度时也是同样的道理。</p>
@@ -323,8 +319,6 @@
 <p>而对于字符串的缩短操作，比如trim操作，采取惰性空间释放，就是不释放。<br>最后提到的兼容部分C字符串函数，因为返回的就是字符串，所以不存在兼容性问题。</p>
 <p>至此redis的动态字符串模块分析结束。</p>
 
-          
-        
       
     </div>
     
@@ -341,145 +335,28 @@
       
 
       
-
-      
-
       
       
-        <div class="post-eof"></div>
+
       
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/28/以前笔记整理——C-小技巧/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="chamlion">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="chamlion'blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/06/28/以前笔记整理——C-小技巧/" itemprop="url">以前笔记整理——C++小技巧</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-28T00:21:33+08:00">
-                2018-06-28
-              </time>
+              <a href="/2018/06/28/以前笔记整理——C-小技巧/" rel="next" title="以前笔记整理——C++小技巧">
+                <i class="fa fa-chevron-left"></i> 以前笔记整理——C++小技巧
+              </a>
             
+          </div>
 
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
             
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <h1 id="1、new操作符的重载"><a href="#1、new操作符的重载" class="headerlink" title="1、new操作符的重载"></a>1、new操作符的重载</h1><p> new的过程分成两部分，第一部分分配内存，第二部分调用构造函数。<br>重载new并不会影响调用构造函数，new的重载只是重载了分配内存那部分操作</p>
-<h1 id="2、为什么free操作不需要指定大小"><a href="#2、为什么free操作不需要指定大小" class="headerlink" title="2、为什么free操作不需要指定大小"></a>2、为什么free操作不需要指定大小</h1><p> 因为在用malloc申请内存的时候，实际申请的是两个不同性质的空间，一块内存存储地址和实际申请内存大小的映射关系。一块空间为申请的内存。<br>Free操作，会先查找要free的地址与他申请内存大小的映射关系表，然后释放对应地址对应大小内存。<br>所以如下代码是一定有问题的<br>Char <em>b =(char </em>) malloc(100)<br>Free(b-10)</p>
-<h1 id="3、-pragma-pack-1-的使用场景"><a href="#3、-pragma-pack-1-的使用场景" class="headerlink" title="3、#pragma pack(1)的使用场景"></a>3、#pragma pack(1)的使用场景</h1><p>  就是设置字节对齐策略，为了让类中成员所占内存大小，不受系统默认的对齐字节数影响。</p>
-<h1 id="4、关于notifyone和notifyall的区别和使用场景"><a href="#4、关于notifyone和notifyall的区别和使用场景" class="headerlink" title="4、关于notifyone和notifyall的区别和使用场景"></a>4、关于notifyone和notifyall的区别和使用场景</h1><p> notifyone是对notifyall的一种优化，两个在实际使用中应该能相互替换<br>notifyone随机唤醒一个线程，notifyall唤醒所有线程去争用锁。<br>如果线程中存在优先级之分，应该用notifyall，否则用notifyone</p>
-<h1 id="5、Ace栅栏的作用"><a href="#5、Ace栅栏的作用" class="headerlink" title="5、Ace栅栏的作用"></a>5、Ace栅栏的作用</h1><p>   用来实现一组线程进行共同的相互同步。<br>功能要求：一旦线程执行到栅栏点，线程阻塞，然后直到所有线程达到栅栏点以后，再一起继续执行。<br>Barrier实现：计数，未达到计数之前全部等待，达到计数之后，notifyall</p>
-<h1 id="6、设置线程优先级"><a href="#6、设置线程优先级" class="headerlink" title="6、设置线程优先级"></a>6、设置线程优先级</h1><p>  Pthread_attr_t 可以通过这个设置线程的一些属性，比如设置线程为进程内竞争，还可以设置线程的调度策略，分为三种，分时调度策略，实时先到先服务策略，实时时间片轮转策略</p>
-<h1 id="7、如何让线程按照顺序启动"><a href="#7、如何让线程按照顺序启动" class="headerlink" title="7、如何让线程按照顺序启动"></a>7、如何让线程按照顺序启动</h1><p>可以通过信号量控制<br>每启动一个函数，sem_wait等待一下。线程函数里面某个位置，调用sem_post<br>这样的话，可以继续创建线程</p>
-<h1 id="8、如何减少锁争用"><a href="#8、如何减少锁争用" class="headerlink" title="8、如何减少锁争用"></a>8、如何减少锁争用</h1><p>一个思路，比如链表遍历。如果是单线程的，那么链表遍历就不需要考虑线程安全性。<br>那么当大量数据过来的时候，可以一个线程对应一个链表，先通过Hash算法将数据分散到每个线程的链表结构里面。<br>或者将处理时间比较长的函数调用之前做hash，despatch数据，然后处理完以后，统一交给一个处理池进行下一步处理。</p>
-<h1 id="9、左值、右值"><a href="#9、左值、右值" class="headerlink" title="9、左值、右值"></a>9、左值、右值</h1><p>左值是指变量，可以放在等号左边<br>右值等号右边的值<br>左值引用 基本语法 type &amp; 引用名=左值表达式<br>右值引用 基本语法 type &amp;&amp;引用名 = 右值表达式</p>
-<h1 id="10、结构体定义小技巧"><a href="#10、结构体定义小技巧" class="headerlink" title="10、结构体定义小技巧"></a>10、结构体定义小技巧</h1><pre><code>uint8_t Version:4,
-         IHL:4
-</code></pre><p>表示申请一个8bit的空间，其中4bit为version，4bit为IHL<br>还可以通过与运算取指定位数<br>比如8位的a，取其后四位 a&amp;00001111</p>
-<h1 id="11、关于继承与多态"><a href="#11、关于继承与多态" class="headerlink" title="11、关于继承与多态"></a>11、关于继承与多态</h1><p> 继承的使用场景，当我们设计类中，确实需要用到多态这一特性的时候，考虑使用继承，否则使用组合。继承是is a的关系，组合是has a的关系</p>
-<h1 id="12、多态的实现原理"><a href="#12、多态的实现原理" class="headerlink" title="12、多态的实现原理"></a>12、多态的实现原理</h1><p>一个类如果包含虚函数，那么会有一个虚函数表。虚函数指针指向这张虚函数表，如果声明一个子类对象时，虚函数表里面对应的是子类的虚函数。调用父类指针指向子类对象时，然后执行的是子类虚函数表中的函数，从而实现多态。多继承就是多个虚函数指针，指向多个虚函数表。<br>存在的问题，私有虚函数，可以通过指针调用</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -489,129 +366,11 @@
   </article>
 
 
-    
-      
 
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/26/2018-6-26-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="chamlion">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="chamlion'blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/06/26/2018-6-26-1/" itemprop="url">2018-6-26</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-26T00:49:34+08:00">
-                2018-06-26
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="Hello-world"><a href="#Hello-world" class="headerlink" title="Hello world"></a>Hello world</h1>
-          
-        
+    <div class="post-spread">
       
     </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
   </div>
-  
-  
-  
-  </article>
-
-
-    
-  </section>
-
-  
 
 
           </div>
@@ -619,6 +378,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -639,8 +402,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -686,6 +458,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#设计时考虑的点"><span class="nav-number">1.</span> <span class="nav-text">设计时考虑的点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实现"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#接下来看，如何创建字符串"><span class="nav-number">3.</span> <span class="nav-text">接下来看，如何创建字符串</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#字符串扩容缩容操作"><span class="nav-number">4.</span> <span class="nav-text">字符串扩容缩容操作</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -826,6 +614,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
