@@ -79,16 +79,17 @@
 
 
 
-<meta name="description" content="The world is so beautiful, it is worth people to strive for it">
-<meta property="og:type" content="website">
-<meta property="og:title" content="chamlion&#39;blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="设计时考虑的点1、实现基本功能，包括链表正向遍历，反向遍历，任意位置插入节点。删除指定节点，记录链表长度。 实现首先看链表节点定义123456789typedef struct listNode &amp;#123;    // 前置节点    struct listNode *prev;    // 后置节点    struct listNode *next;    // 节点的值    void *v">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis源码阅读--双端链表">
+<meta property="og:url" content="http://yoursite.com/2018/07/01/redis源码阅读-双端链表/index.html">
 <meta property="og:site_name" content="chamlion&#39;blog">
-<meta property="og:description" content="The world is so beautiful, it is worth people to strive for it">
+<meta property="og:description" content="设计时考虑的点1、实现基本功能，包括链表正向遍历，反向遍历，任意位置插入节点。删除指定节点，记录链表长度。 实现首先看链表节点定义123456789typedef struct listNode &amp;#123;    // 前置节点    struct listNode *prev;    // 后置节点    struct listNode *next;    // 节点的值    void *v">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-07-01T14:48:35.030Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="chamlion&#39;blog">
-<meta name="twitter:description" content="The world is so beautiful, it is worth people to strive for it">
+<meta name="twitter:title" content="redis源码阅读--双端链表">
+<meta name="twitter:description" content="设计时考虑的点1、实现基本功能，包括链表正向遍历，反向遍历，任意位置插入节点。删除指定节点，记录链表长度。 实现首先看链表节点定义123456789typedef struct listNode &amp;#123;    // 前置节点    struct listNode *prev;    // 后置节点    struct listNode *next;    // 节点的值    void *v">
 
 
 
@@ -118,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/07/01/redis源码阅读-双端链表/"/>
 
 
 
 
 
-  <title>chamlion'blog</title>
+  <title>redis源码阅读--双端链表 | chamlion'blog</title>
   
 
 
@@ -143,8 +144,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -227,9 +227,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -259,9 +259,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/07/01/redis源码阅读-双端链表/" itemprop="url">redis源码阅读--双端链表</a></h1>
+          <h1 class="post-title" itemprop="name headline">redis源码阅读--双端链表</h1>
         
 
         <div class="post-meta">
@@ -311,9 +309,7 @@
       
 
       
-        
-          
-            <h1 id="设计时考虑的点"><a href="#设计时考虑的点" class="headerlink" title="设计时考虑的点"></a>设计时考虑的点</h1><p>1、实现基本功能，包括链表正向遍历，反向遍历，任意位置插入节点。删除指定节点，记录链表长度。</p>
+        <h1 id="设计时考虑的点"><a href="#设计时考虑的点" class="headerlink" title="设计时考虑的点"></a>设计时考虑的点</h1><p>1、实现基本功能，包括链表正向遍历，反向遍历，任意位置插入节点。删除指定节点，记录链表长度。</p>
 <h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>首先看链表节点定义<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">typedef struct listNode &#123;</span><br><span class="line"></span><br><span class="line">    // 前置节点</span><br><span class="line">    struct listNode *prev;</span><br><span class="line">    // 后置节点</span><br><span class="line">    struct listNode *next;</span><br><span class="line">    // 节点的值</span><br><span class="line">    void *value;</span><br><span class="line">&#125; listNode;</span><br></pre></td></tr></table></figure></p>
 <p>这没啥好说的，中规中矩<br>有的链表实现是，仅仅将多个listnode串起来，组成链表。redis里面为了更好的管理，通过以下结构来保存链表信息<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">typedef struct list &#123;</span><br><span class="line">    // 表头节点</span><br><span class="line">    listNode *head;</span><br><span class="line">    // 表尾节点</span><br><span class="line">    listNode *tail;</span><br><span class="line">    // 节点值复制函数</span><br><span class="line">    void *(*dup)(void *ptr);</span><br><span class="line">    // 节点值释放函数</span><br><span class="line">    void (*free)(void *ptr);</span><br><span class="line">    // 节点值对比函数</span><br><span class="line">    int (*match)(void *ptr, void *key);</span><br><span class="line">    // 链表所包含的节点数量</span><br><span class="line">    unsigned long len;</span><br><span class="line">&#125; list;</span><br></pre></td></tr></table></figure></p>
 <p>可以看出，作者在设计的时候，提供了三个函数成员。也就是在创建的时候，可以指定节点的复制、释放、比较函数。也算一种多态的实现吧。</p>
@@ -328,8 +324,6 @@
 <p>链表的复制，如果传入了复制函数，则调用传入的复制函数，否则只是指针还是指向value对应的地址。<br>详细实现如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">list *listDup(list *orig)</span><br><span class="line">&#123;</span><br><span class="line">    list *copy;</span><br><span class="line">    listIter *iter;</span><br><span class="line">    listNode *node;</span><br><span class="line">    // 创建新链表</span><br><span class="line">    if ((copy = listCreate()) == NULL)</span><br><span class="line">        return NULL;</span><br><span class="line">    // 设置节点值处理函数</span><br><span class="line">    copy-&gt;dup = orig-&gt;dup;</span><br><span class="line">    copy-&gt;free = orig-&gt;free;</span><br><span class="line">    copy-&gt;match = orig-&gt;match;</span><br><span class="line">    // 迭代整个输入链表</span><br><span class="line">    iter = listGetIterator(orig, AL_START_HEAD);</span><br><span class="line">    while((node = listNext(iter)) != NULL) &#123;</span><br><span class="line">        void *value;</span><br><span class="line">        // 复制节点值到新节点</span><br><span class="line">        if (copy-&gt;dup) &#123;</span><br><span class="line">            value = copy-&gt;dup(node-&gt;value);</span><br><span class="line">            if (value == NULL) &#123;</span><br><span class="line">                listRelease(copy);</span><br><span class="line">                listReleaseIterator(iter);</span><br><span class="line">                return NULL;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else</span><br><span class="line">            value = node-&gt;value;</span><br><span class="line">        // 将节点添加到链表</span><br><span class="line">        if (listAddNodeTail(copy, value) == NULL) &#123;</span><br><span class="line">            listRelease(copy);</span><br><span class="line">            listReleaseIterator(iter);</span><br><span class="line">            return NULL;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    // 释放迭代器</span><br><span class="line">    listReleaseIterator(iter);</span><br><span class="line">    // 返回副本</span><br><span class="line">    return copy;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>综上，这里面除了Iter和list结构体的设计有亮点以外，其他链表中各种操作的实现还是挺经典的。</p>
 
-          
-        
       
     </div>
     
@@ -346,140 +340,28 @@
       
 
       
-
-      
-
       
       
-        <div class="post-eof"></div>
+
       
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/01/redis源码阅读-简单动态字符串/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="chamlion">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="chamlion'blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/07/01/redis源码阅读-简单动态字符串/" itemprop="url">以redis源码阅读--简单动态字符串</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-07-01T00:14:19+08:00">
-                2018-07-01
-              </time>
+              <a href="/2018/07/01/redis源码阅读-简单动态字符串/" rel="next" title="以redis源码阅读--简单动态字符串">
+                <i class="fa fa-chevron-left"></i> 以redis源码阅读--简单动态字符串
+              </a>
             
+          </div>
 
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
             
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <h1 id="设计时考虑的点"><a href="#设计时考虑的点" class="headerlink" title="设计时考虑的点"></a>设计时考虑的点</h1><p>1、常数时间内获取到字符串长度<br>2、杜绝缓冲区溢出<br>3、减少修改字符串带来的内存重分配次数<br>4、二进制安全<br>是指无论字符串中包含何种字符，都不会对它的操作造成任何正确性的影响。<br>比如包含空字符(\0)的时候，应该能正常返回到字符串结尾的长度，而不是到空格的长度。而strlen()对字符串求长度时会有这个问题。<br>5、兼容部分c字符串函数</p>
-<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>首先看结构体定义<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">struct sdshdr &#123;</span><br><span class="line">    // buf 中已占用空间的长度</span><br><span class="line">    int len;</span><br><span class="line">    // buf 中剩余可用空间的长度</span><br><span class="line">    int free;</span><br><span class="line">    // 数据空间</span><br><span class="line">    char buf[];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-<p>这里面buff不用 char<em> buff的原因是 char buf[]不占空间，char</em> buff占用一个指针空间。<br>在获取字符串长度时，用到了这一特性<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">static inline size_t sdslen(const sds s) &#123;</span><br><span class="line">    struct sdshdr *sh = (void*)(s-(sizeof(struct sdshdr)));</span><br><span class="line">    return sh-&gt;len;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>传入的参数其实是buff地址。所以在结构体指针映射的时候，需要在buff的基础上，向左移动两位。<br>在获取可用空间长度时也是同样的道理。</p>
-<h1 id="接下来看，如何创建字符串"><a href="#接下来看，如何创建字符串" class="headerlink" title="接下来看，如何创建字符串"></a>接下来看，如何创建字符串</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">sds sdsnewlen(const void *init, size_t initlen) &#123;</span><br><span class="line"></span><br><span class="line">    struct sdshdr *sh;</span><br><span class="line"></span><br><span class="line">    // 根据是否有初始化内容，选择适当的内存分配方式</span><br><span class="line">    // T = O(N)</span><br><span class="line">    if (init) &#123;</span><br><span class="line">        // zmalloc 不初始化所分配的内存</span><br><span class="line">        sh = zmalloc(sizeof(struct sdshdr)+initlen+1);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        // zcalloc 将分配的内存全部初始化为 0</span><br><span class="line">        sh = zcalloc(sizeof(struct sdshdr)+initlen+1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 内存分配失败，返回</span><br><span class="line">    if (sh == NULL) return NULL;</span><br><span class="line"></span><br><span class="line">    // 设置初始化长度</span><br><span class="line">    sh-&gt;len = initlen;</span><br><span class="line">    // 新 sds 不预留任何空间</span><br><span class="line">    sh-&gt;free = 0;</span><br><span class="line">    // 如果有指定初始化内容，将它们复制到 sdshdr 的 buf 中</span><br><span class="line">    // T = O(N)</span><br><span class="line">    if (initlen &amp;&amp; init)</span><br><span class="line">        memcpy(sh-&gt;buf, init, initlen);</span><br><span class="line">    // 以 \0 结尾</span><br><span class="line">    sh-&gt;buf[initlen] = &apos;\0&apos;;</span><br><span class="line"></span><br><span class="line">    // 返回 buf 部分，而不是整个 sdshdr</span><br><span class="line">    return (char*)sh-&gt;buf;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以看到，指定字符串长度后，实际申请的空间为sdshdr结构体大小+要申请字符串大小+1<br>其中+1是用来存储’\0’终止符，使其符合c字符串规范。<br>且申请的是连续内存。且创建完成后返回的是字符串地址。</p>
-<h1 id="字符串扩容缩容操作"><a href="#字符串扩容缩容操作" class="headerlink" title="字符串扩容缩容操作"></a>字符串扩容缩容操作</h1><p>采取空间预分配进行优化，典型的空间换时间策略，具体扩容算法是<br>如果需要空间小于1MB直接，直接分配两倍的空间，如果大于1MB，在原来基础上多分配1M。<br>代码见<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"> /*</span><br><span class="line"> *返回值</span><br><span class="line"> *  sds ：扩展成功返回扩展后的 sds</span><br><span class="line"> *        扩展失败返回 NULL</span><br><span class="line"> *</span><br><span class="line"> * 复杂度</span><br><span class="line"> *  T = O(N)</span><br><span class="line"> */</span><br><span class="line">sds sdsMakeRoomFor(sds s, size_t addlen) &#123;</span><br><span class="line"></span><br><span class="line">    struct sdshdr *sh, *newsh;</span><br><span class="line"></span><br><span class="line">    // 获取 s 目前的空余空间长度</span><br><span class="line">    size_t free = sdsavail(s);</span><br><span class="line"></span><br><span class="line">    size_t len, newlen;</span><br><span class="line"></span><br><span class="line">    // s 目前的空余空间已经足够，无须再进行扩展，直接返回</span><br><span class="line">    if (free &gt;= addlen) return s;</span><br><span class="line"></span><br><span class="line">    // 获取 s 目前已占用空间的长度</span><br><span class="line">    len = sdslen(s);</span><br><span class="line">    sh = (void*) (s-(sizeof(struct sdshdr)));</span><br><span class="line"></span><br><span class="line">    // s 最少需要的长度</span><br><span class="line">    newlen = (len+addlen);</span><br><span class="line"></span><br><span class="line">    // 根据新长度，为 s 分配新空间所需的大小</span><br><span class="line">    if (newlen &lt; SDS_MAX_PREALLOC)</span><br><span class="line">        // 如果新长度小于 SDS_MAX_PREALLOC </span><br><span class="line">        // 那么为它分配两倍于所需长度的空间</span><br><span class="line">        newlen *= 2;</span><br><span class="line">    else</span><br><span class="line">        // 否则，分配长度为目前长度加上 SDS_MAX_PREALLOC</span><br><span class="line">        newlen += SDS_MAX_PREALLOC;</span><br><span class="line">    // T = O(N)</span><br><span class="line">    newsh = zrealloc(sh, sizeof(struct sdshdr)+newlen+1);</span><br><span class="line"></span><br><span class="line">    // 内存不足，分配失败，返回</span><br><span class="line">    if (newsh == NULL) return NULL;</span><br><span class="line"></span><br><span class="line">    // 更新 sds 的空余长度</span><br><span class="line">    newsh-&gt;free = newlen - len;</span><br><span class="line"></span><br><span class="line">    // 返回 sds</span><br><span class="line">    return newsh-&gt;buf;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>而对于字符串的缩短操作，比如trim操作，采取惰性空间释放，就是不释放。<br>最后提到的兼容部分C字符串函数，因为返回的就是字符串，所以不存在兼容性问题。</p>
-<p>至此redis的动态字符串模块分析结束。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -489,262 +371,11 @@
   </article>
 
 
-    
-      
 
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/28/以前笔记整理——C-小技巧/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="chamlion">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="chamlion'blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/06/28/以前笔记整理——C-小技巧/" itemprop="url">以前笔记整理——C++小技巧</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-28T00:21:33+08:00">
-                2018-06-28
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="1、new操作符的重载"><a href="#1、new操作符的重载" class="headerlink" title="1、new操作符的重载"></a>1、new操作符的重载</h1><p> new的过程分成两部分，第一部分分配内存，第二部分调用构造函数。<br>重载new并不会影响调用构造函数，new的重载只是重载了分配内存那部分操作</p>
-<h1 id="2、为什么free操作不需要指定大小"><a href="#2、为什么free操作不需要指定大小" class="headerlink" title="2、为什么free操作不需要指定大小"></a>2、为什么free操作不需要指定大小</h1><p> 因为在用malloc申请内存的时候，实际申请的是两个不同性质的空间，一块内存存储地址和实际申请内存大小的映射关系。一块空间为申请的内存。<br>Free操作，会先查找要free的地址与他申请内存大小的映射关系表，然后释放对应地址对应大小内存。<br>所以如下代码是一定有问题的<br>Char <em>b =(char </em>) malloc(100)<br>Free(b-10)</p>
-<h1 id="3、-pragma-pack-1-的使用场景"><a href="#3、-pragma-pack-1-的使用场景" class="headerlink" title="3、#pragma pack(1)的使用场景"></a>3、#pragma pack(1)的使用场景</h1><p>  就是设置字节对齐策略，为了让类中成员所占内存大小，不受系统默认的对齐字节数影响。</p>
-<h1 id="4、关于notifyone和notifyall的区别和使用场景"><a href="#4、关于notifyone和notifyall的区别和使用场景" class="headerlink" title="4、关于notifyone和notifyall的区别和使用场景"></a>4、关于notifyone和notifyall的区别和使用场景</h1><p> notifyone是对notifyall的一种优化，两个在实际使用中应该能相互替换<br>notifyone随机唤醒一个线程，notifyall唤醒所有线程去争用锁。<br>如果线程中存在优先级之分，应该用notifyall，否则用notifyone</p>
-<h1 id="5、Ace栅栏的作用"><a href="#5、Ace栅栏的作用" class="headerlink" title="5、Ace栅栏的作用"></a>5、Ace栅栏的作用</h1><p>   用来实现一组线程进行共同的相互同步。<br>功能要求：一旦线程执行到栅栏点，线程阻塞，然后直到所有线程达到栅栏点以后，再一起继续执行。<br>Barrier实现：计数，未达到计数之前全部等待，达到计数之后，notifyall</p>
-<h1 id="6、设置线程优先级"><a href="#6、设置线程优先级" class="headerlink" title="6、设置线程优先级"></a>6、设置线程优先级</h1><p>  Pthread_attr_t 可以通过这个设置线程的一些属性，比如设置线程为进程内竞争，还可以设置线程的调度策略，分为三种，分时调度策略，实时先到先服务策略，实时时间片轮转策略</p>
-<h1 id="7、如何让线程按照顺序启动"><a href="#7、如何让线程按照顺序启动" class="headerlink" title="7、如何让线程按照顺序启动"></a>7、如何让线程按照顺序启动</h1><p>可以通过信号量控制<br>每启动一个函数，sem_wait等待一下。线程函数里面某个位置，调用sem_post<br>这样的话，可以继续创建线程</p>
-<h1 id="8、如何减少锁争用"><a href="#8、如何减少锁争用" class="headerlink" title="8、如何减少锁争用"></a>8、如何减少锁争用</h1><p>一个思路，比如链表遍历。如果是单线程的，那么链表遍历就不需要考虑线程安全性。<br>那么当大量数据过来的时候，可以一个线程对应一个链表，先通过Hash算法将数据分散到每个线程的链表结构里面。<br>或者将处理时间比较长的函数调用之前做hash，despatch数据，然后处理完以后，统一交给一个处理池进行下一步处理。</p>
-<h1 id="9、左值、右值"><a href="#9、左值、右值" class="headerlink" title="9、左值、右值"></a>9、左值、右值</h1><p>左值是指变量，可以放在等号左边<br>右值等号右边的值<br>左值引用 基本语法 type &amp; 引用名=左值表达式<br>右值引用 基本语法 type &amp;&amp;引用名 = 右值表达式</p>
-<h1 id="10、结构体定义小技巧"><a href="#10、结构体定义小技巧" class="headerlink" title="10、结构体定义小技巧"></a>10、结构体定义小技巧</h1><pre><code>uint8_t Version:4,
-         IHL:4
-</code></pre><p>表示申请一个8bit的空间，其中4bit为version，4bit为IHL<br>还可以通过与运算取指定位数<br>比如8位的a，取其后四位 a&amp;00001111</p>
-<h1 id="11、关于继承与多态"><a href="#11、关于继承与多态" class="headerlink" title="11、关于继承与多态"></a>11、关于继承与多态</h1><p> 继承的使用场景，当我们设计类中，确实需要用到多态这一特性的时候，考虑使用继承，否则使用组合。继承是is a的关系，组合是has a的关系</p>
-<h1 id="12、多态的实现原理"><a href="#12、多态的实现原理" class="headerlink" title="12、多态的实现原理"></a>12、多态的实现原理</h1><p>一个类如果包含虚函数，那么会有一个虚函数表。虚函数指针指向这张虚函数表，如果声明一个子类对象时，虚函数表里面对应的是子类的虚函数。调用父类指针指向子类对象时，然后执行的是子类虚函数表中的函数，从而实现多态。多继承就是多个虚函数指针，指向多个虚函数表。<br>存在的问题，私有虚函数，可以通过指针调用</p>
-
-          
-        
+    <div class="post-spread">
       
     </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
   </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/26/2018-6-26-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="chamlion">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="chamlion'blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/06/26/2018-6-26-1/" itemprop="url">2018-6-26</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-26T00:49:34+08:00">
-                2018-06-26
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="Hello-world"><a href="#Hello-world" class="headerlink" title="Hello world"></a>Hello world</h1>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-  </section>
-
-  
 
 
           </div>
@@ -752,6 +383,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -772,8 +407,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -819,6 +463,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#设计时考虑的点"><span class="nav-number">1.</span> <span class="nav-text">设计时考虑的点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实现"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#链表的创建"><span class="nav-number">3.</span> <span class="nav-text">链表的创建</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#链表节点的插入"><span class="nav-number">4.</span> <span class="nav-text">链表节点的插入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#节点的删除"><span class="nav-number">5.</span> <span class="nav-text">节点的删除</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#链表的复制"><span class="nav-number">6.</span> <span class="nav-text">链表的复制</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -959,6 +619,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
