@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="redis," />
 
 
 
@@ -80,13 +80,14 @@
 
 
 <meta name="description" content="设计时考虑的点1、常数时间内获取到字符串长度2、杜绝缓冲区溢出3、减少修改字符串带来的内存重分配次数4、二进制安全是指无论字符串中包含何种字符，都不会对它的操作造成任何正确性的影响。比如包含空字符(\0)的时候，应该能正常返回到字符串结尾的长度，而不是到空格的长度。而strlen()对字符串求长度时会有这个问题。5、兼容部分c字符串函数 实现首先看结构体定义12345678struct sdshd">
+<meta name="keywords" content="redis">
 <meta property="og:type" content="article">
 <meta property="og:title" content="以redis源码阅读--简单动态字符串">
 <meta property="og:url" content="http://yoursite.com/2018/07/01/redis源码阅读-简单动态字符串/index.html">
 <meta property="og:site_name" content="chamlion&#39;blog">
 <meta property="og:description" content="设计时考虑的点1、常数时间内获取到字符串长度2、杜绝缓冲区溢出3、减少修改字符串带来的内存重分配次数4、二进制安全是指无论字符串中包含何种字符，都不会对它的操作造成任何正确性的影响。比如包含空字符(\0)的时候，应该能正常返回到字符串结尾的长度，而不是到空格的长度。而strlen()对字符串求长度时会有这个问题。5、兼容部分c字符串函数 实现首先看结构体定义12345678struct sdshd">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-06-30T16:14:46.945Z">
+<meta property="og:updated_time" content="2018-07-07T16:31:27.543Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="以redis源码阅读--简单动态字符串">
 <meta name="twitter:description" content="设计时考虑的点1、常数时间内获取到字符串长度2、杜绝缓冲区溢出3、减少修改字符串带来的内存重分配次数4、二进制安全是指无论字符串中包含何种字符，都不会对它的操作造成任何正确性的影响。比如包含空字符(\0)的时候，应该能正常返回到字符串结尾的长度，而不是到空格的长度。而strlen()对字符串求长度时会有这个问题。5、兼容部分c字符串函数 实现首先看结构体定义12345678struct sdshd">
@@ -333,6 +334,12 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/redis/" rel="tag"># redis</a>
+          
+        </div>
+      
 
       
       
@@ -443,6 +450,15 @@
 
             
 
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
             
 
           </nav>

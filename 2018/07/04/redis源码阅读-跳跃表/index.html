@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="redis," />
 
 
 
@@ -80,13 +80,14 @@
 
 
 <meta name="description" content="跳跃表概念这篇文章介绍的不错https://my.oschina.net/ljc94/blog/807388原理类似于二分查找。在链表有序，节点数为n的情况下，先比较m节点(m为随机产生的节点)，大于的话查找范围变为(0-m)。否则(m-0)。 实现123456789101112131415typedef struct zskiplistNode &amp;#123;    // 成员对象    robj">
+<meta name="keywords" content="redis">
 <meta property="og:type" content="article">
 <meta property="og:title" content="redis源码阅读--跳跃表">
 <meta property="og:url" content="http://yoursite.com/2018/07/04/redis源码阅读-跳跃表/index.html">
 <meta property="og:site_name" content="chamlion&#39;blog">
 <meta property="og:description" content="跳跃表概念这篇文章介绍的不错https://my.oschina.net/ljc94/blog/807388原理类似于二分查找。在链表有序，节点数为n的情况下，先比较m节点(m为随机产生的节点)，大于的话查找范围变为(0-m)。否则(m-0)。 实现123456789101112131415typedef struct zskiplistNode &amp;#123;    // 成员对象    robj">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-07-04T15:02:57.080Z">
+<meta property="og:updated_time" content="2018-07-07T16:31:46.161Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="redis源码阅读--跳跃表">
 <meta name="twitter:description" content="跳跃表概念这篇文章介绍的不错https://my.oschina.net/ljc94/blog/807388原理类似于二分查找。在链表有序，节点数为n的情况下，先比较m节点(m为随机产生的节点)，大于的话查找范围变为(0-m)。否则(m-0)。 实现123456789101112131415typedef struct zskiplistNode &amp;#123;    // 成员对象    robj">
@@ -334,6 +335,12 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/redis/" rel="tag"># redis</a>
+          
+        </div>
+      
 
       
       
@@ -440,6 +447,15 @@
 
             
 
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
             
 
           </nav>
